@@ -1,0 +1,7 @@
+{
+  "name": "MediTriage Secure",
+  "description": "A secure, privacy-aware AI healthcare triage assistant demo. Features clinical risk scoring, symptom analysis, and simulated EHR integration using advanced NLP.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
