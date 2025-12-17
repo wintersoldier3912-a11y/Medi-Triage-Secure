@@ -1,7 +1,7 @@
 import React from 'react';
 import { TriageAssessment, RiskLevel, PatientProfile } from '../types';
 import RiskChart from './RiskChart';
-import { AlertTriangle, Ambulance, Stethoscope, Home, Info, ShieldCheck, Printer, Download } from 'lucide-react';
+import { AlertTriangle, Ambulance, Stethoscope, Home, Info, ShieldCheck, Printer, Download, BookOpen } from 'lucide-react';
 
 interface AssessmentPanelProps {
   assessment: TriageAssessment | null;
@@ -148,7 +148,17 @@ const AssessmentPanel: React.FC<AssessmentPanelProps> = ({ assessment, patient, 
 
         {/* Primary Condition */}
         <div>
-           <h3 className="text-slate-900 font-semibold mb-3">Primary Suspect</h3>
+           <div className="flex items-center justify-between mb-2">
+              <h3 className="text-slate-900 font-semibold">Primary Suspect</h3>
+              {assessment.icd10Code && (
+                 <div className="flex items-center gap-2" title="ICD-10-CM Code">
+                   <BookOpen className="w-3 h-3 text-slate-400" />
+                   <span className="font-mono text-sm font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                     {assessment.icd10Code}
+                   </span>
+                 </div>
+              )}
+           </div>
            <div className="p-4 rounded-lg border border-l-4 border-slate-200 border-l-blue-500 bg-white shadow-sm">
              <span className="text-lg font-medium text-slate-800">{assessment.primaryCondition}</span>
            </div>

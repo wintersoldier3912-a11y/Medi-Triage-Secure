@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, UserCircle, Bot, Paperclip, Mic, AlertCircle, Database, Check, Loader2, FileText, Sparkles, Thermometer } from 'lucide-react';
+import { Send, UserCircle, Bot, Paperclip, Mic, AlertCircle, Database, Check, Loader2, FileText, Sparkles, Thermometer, X } from 'lucide-react';
 import { MOCK_EHR_DATA, MOCK_DISCLAIMER } from '../constants';
 import { assessSymptoms } from '../services/geminiService';
 import { TriageAssessment, ChatMessage, PatientProfile } from '../types';
@@ -54,6 +54,8 @@ const TriageDashboard: React.FC<TriageDashboardProps> = ({ patient, onUpdatePati
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [severity, setSeverity] = useState<string | null>(null);
+  const [messageCount, setMessageCount] = useState(0);
+  const [showDisclaimerToast, setShowDisclaimerToast] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -182,6 +184,13 @@ const TriageDashboard: React.FC<TriageDashboardProps> = ({ patient, onUpdatePati
   const handleSend = async () => {
     if (!input.trim()) return;
 
+    // Check interaction count for disclaimer reminder
+    const newCount = messageCount + 1;
+    setMessageCount(newCount);
+    if (newCount > 0 && newCount % 3 === 0) {
+      setShowDisclaimerToast(true);
+    }
+
     // Append severity context if selected
     const contentWithSeverity = severity 
       ? `${input} (Severity: ${severity})`
@@ -247,10 +256,10 @@ const TriageDashboard: React.FC<TriageDashboardProps> = ({ patient, onUpdatePati
       )}
 
       {/* Left: Chat Interface */}
-      <div className="w-full md:w-1/2 lg:w-5/12 flex flex-col border-r border-slate-200 bg-white">
+      <div className="w-full md:w-1/2 lg:w-5/12 flex flex-col border-r border-slate-200 bg-white relative">
         
         {/* Patient Context Banner */}
-        <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between shadow-sm z-10">
+        <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between shadow-sm z-10 relative">
            <div>
              <h2 className="text-sm font-bold text-slate-700 flex items-center gap-2">
                Patient: {patient.name}
@@ -288,6 +297,27 @@ const TriageDashboard: React.FC<TriageDashboardProps> = ({ patient, onUpdatePati
              )}
            </button>
         </div>
+
+        {/* Disclaimer Reminder Toast */}
+        {showDisclaimerToast && (
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-20 w-3/4 max-w-sm animate-in fade-in slide-in-from-top-4 duration-300">
+             <div className="bg-amber-50/95 backdrop-blur border border-amber-200 text-amber-900 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-xs font-bold uppercase tracking-wide mb-1 text-amber-700">Safety Reminder</p>
+                  <p className="text-xs leading-relaxed opacity-90">
+                    This AI assistant is for demonstration only. <span className="font-bold">Do not use for real medical emergencies.</span>
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setShowDisclaimerToast(false)} 
+                  className="text-amber-500 hover:text-amber-800 transition-colors p-1"
+                >
+                   <X className="w-4 h-4" />
+                </button>
+             </div>
+          </div>
+        )}
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6 clinical-scroll" ref={scrollRef}>

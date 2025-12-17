@@ -40,8 +40,9 @@ export const assessSymptoms = async (
     2. Cross-reference with history, meds, and vitals (e.g., if BP is high and symptoms match hypertension crisis).
     3. Determine the clinical risk level (Low, Moderate, High, Critical).
     4. Identify the most likely primary condition.
-    5. Provide a differential diagnosis with estimated probabilities.
-    6. Recommend a clear course of action (e.g., "Call 911", "Go to ER", "Schedule PCP appointment", "Home care").
+    5. Assign the most appropriate ICD-10-CM code for the primary condition.
+    6. Provide a differential diagnosis with estimated probabilities.
+    7. Recommend a clear course of action (e.g., "Call 911", "Go to ER", "Schedule PCP appointment", "Home care").
     
     RULES:
     - Be conservative and safety-prioritizing.
@@ -64,6 +65,7 @@ export const assessSymptoms = async (
             enum: [RiskLevel.LOW, RiskLevel.MODERATE, RiskLevel.HIGH, RiskLevel.CRITICAL]
           },
           primaryCondition: { type: Type.STRING },
+          icd10Code: { type: Type.STRING, description: "ICD-10-CM code for the primary condition" },
           differentialDiagnosis: {
             type: Type.ARRAY,
             items: {
@@ -79,7 +81,7 @@ export const assessSymptoms = async (
           explanation: { type: Type.STRING },
           triageColor: { type: Type.STRING, enum: ["green", "yellow", "orange", "red"] }
         },
-        required: ["riskLevel", "primaryCondition", "differentialDiagnosis", "recommendedAction", "explanation", "triageColor"]
+        required: ["riskLevel", "primaryCondition", "icd10Code", "differentialDiagnosis", "recommendedAction", "explanation", "triageColor"]
       }
     }
   });

@@ -42,6 +42,7 @@ export interface ClinicalCondition {
 export interface TriageAssessment {
   riskLevel: RiskLevel;
   primaryCondition: string;
+  icd10Code: string;
   differentialDiagnosis: ClinicalCondition[];
   recommendedAction: string;
   explanation: string;
